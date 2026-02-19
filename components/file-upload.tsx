@@ -56,14 +56,14 @@ export const FileUpload = ({ file, onFileSelect, onFileRemove }: FileUploadProps
 
   return (
     <div className="space-y-3">
-      <Label className="text-base font-medium">模组文件</Label>
+      <Label className="text-base font-medium text-white">模组文件</Label>
       <div
         className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
           isDragging
-            ? "border-green-500 bg-green-50"
+            ? "border-green-500 bg-green-950"
             : file
-              ? "border-green-300 bg-green-50"
-              : "border-gray-300 hover:border-green-400"
+              ? "border-green-600 bg-green-950"
+              : "border-zinc-700 bg-zinc-900 hover:border-green-600"
         }`}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
@@ -71,24 +71,24 @@ export const FileUpload = ({ file, onFileSelect, onFileRemove }: FileUploadProps
       >
         {file ? (
           <div className="space-y-3">
-            <CheckCircle className="h-12 w-12 text-green-600 mx-auto" />
+            <CheckCircle className="h-12 w-12 text-green-400 mx-auto" />
             <div>
-              <p className="font-medium text-gray-900">{file.name}</p>
-              <p className="text-sm text-gray-500">{formatFileSize(file.size)}</p>
+              <p className="font-medium text-white">{file.name}</p>
+              <p className="text-sm text-zinc-400">{formatFileSize(file.size)}</p>
             </div>
-            <Button variant="outline" size="sm" onClick={onFileRemove} className="border-gray-300">
+            <Button variant="outline" size="sm" onClick={onFileRemove} className="border-zinc-600 text-zinc-300 hover:bg-zinc-800">
               重新选择
             </Button>
           </div>
         ) : (
           <div className="space-y-3">
             <div>
-              <p className="text-lg font-medium text-gray-900">拖拽文件到此处或点击选择</p>
-              <p className="text-sm text-gray-500">支持 .rwmod 格式，最大 100MB</p>
+              <p className="text-lg font-medium text-white">拖拽文件到此处或点击选择</p>
+              <p className="text-sm text-zinc-400">支持 .rwmod 格式，最大 100MB</p>
             </div>
             <Button
               variant="outline"
-              className="cursor-pointer border-green-300 text-green-700 hover:bg-green-50"
+              className="cursor-pointer border-green-600 text-green-400 hover:bg-green-950"
               onClick={() => document.getElementById("file-upload")?.click()}
             >
               选择文件

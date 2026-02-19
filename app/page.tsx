@@ -73,8 +73,6 @@ export default function HomePage() {
   const handleTaskRestore = async (taskId: string) => {
     try {
       await restoreTask(taskId)
-      // 任务恢复成功后，保持在当前的 restore 标签页，让用户看到查询结果
-      // setActiveTab("restore") // 实际上已经在 restore 标签页了，无需切换
     } catch (error) {
       console.error("Failed to restore task:", error)
     }
@@ -95,23 +93,23 @@ export default function HomePage() {
   const currentMessage = taskStatus?.message || ""
 
   return (
-    <div className="min-h-screen blueprint-grid">
+    <div className="min-h-screen blueprint-grid flex flex-col">
       <Header />
 
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 py-8 flex-1">
         <div className="max-w-4xl mx-auto space-y-8">
           <div className="text-center space-y-4">
-            <h2 className="text-3xl font-bold text-gray-900">铁锈工坊 - AI汉化</h2>
-            <p className="text-lg text-gray-600">开放测试</p>
+            <h2 className="text-3xl font-bold text-white">铁锈工坊 - AI汉化</h2>
+            <p className="text-lg text-zinc-400">开放测试</p>
           </div>
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="upload" className="flex items-center space-x-2">
+            <TabsList className="grid w-full grid-cols-2 bg-zinc-900 border border-zinc-800">
+              <TabsTrigger value="upload" className="flex items-center space-x-2 data-[state=active]:bg-green-600 data-[state=active]:text-white text-zinc-400">
                 <Upload className="h-4 w-4" />
                 <span>汉化模组</span>
               </TabsTrigger>
-              <TabsTrigger value="restore" className="flex items-center space-x-2">
+              <TabsTrigger value="restore" className="flex items-center space-x-2 data-[state=active]:bg-green-600 data-[state=active]:text-white text-zinc-400">
                 <FileSearch className="h-4 w-4" />
                 <span>查找任务</span>
               </TabsTrigger>
@@ -120,35 +118,30 @@ export default function HomePage() {
             <TabsContent value="upload" className="space-y-6">
               {!taskKey ? (
                 <div className="hard-card">
-                  <div className="border-b-2 border-green-200 bg-green-50/50 p-4">
+                  <div className="border-b-2 border-green-800 bg-green-950/50 p-4">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-3">
-                        <div className="p-2 bg-green-100 border-2 border-green-300" style={{ borderRadius: '3px' }}>
-                          <FileText className="h-5 w-5 text-green-600" />
+                        <div className="p-2 bg-green-900 border-2 border-green-700" style={{ borderRadius: '3px' }}>
+                          <FileText className="h-5 w-5 text-green-400" />
                         </div>
                         <div>
-                          <h3 className="text-lg font-bold text-gray-900 uppercase tracking-wide">模组汉化</h3>
-                          <p className="text-sm text-gray-600 font-medium">MOD TRANSLATION</p>
+                          <h3 className="text-lg font-bold text-white uppercase tracking-wide">模组汉化</h3>
+                          <p className="text-sm text-zinc-500 font-medium">MOD TRANSLATION</p>
                         </div>
                       </div>
-                      <Link href="/admin/login">
-                        <Button variant="ghost" size="sm" className="text-gray-400 hover:text-gray-600 border-2 border-transparent hover:border-gray-300" style={{ borderRadius: '3px' }}>
-                          <Settings className="h-4 w-4" />
-                        </Button>
-                      </Link>
+
                     </div>
-                    <p className="text-sm text-gray-600 mt-3 font-medium">上传模组文件, 全自动汉化</p>
+                    <p className="text-sm text-zinc-400 mt-3 font-medium">上传模组文件, 全自动汉化</p>
                   </div>
 
                   <div className="p-6 space-y-6">
-                    {/* 汉化风格选择 */}
-                    <Label className="text-base font-medium">汉化风格</Label>
+                    <Label className="text-base font-medium text-white">汉化风格</Label>
                     <div
                       key={"auto"}
                       className={`relative cursor-pointer rounded-lg border-2 p-4 transition-all hover:shadow-md w-full ${
                         translationStyle === "auto"
-                          ? "border-green-500 bg-gradient-to-br from-green-50 to-green-100 shadow-sm"
-                          : "border-gray-200 hover:border-green-300"
+                          ? "border-green-600 bg-gradient-to-br from-green-950 to-green-900 shadow-sm"
+                          : "border-zinc-700 hover:border-green-600 bg-zinc-900"
                       }`}
                       onClick={() => setTranslationStyle("auto")}
                     >
@@ -156,18 +149,18 @@ export default function HomePage() {
                         <div
                           className={`mt-0.5 h-4 w-4 rounded-full border-2 flex items-center justify-center ${
                             translationStyle === "auto" 
-                              ? "border-green-500 bg-gradient-to-br from-green-400 to-green-600" 
-                              : "border-gray-300"
+                              ? "border-green-500 bg-green-500" 
+                              : "border-zinc-600"
                           }`}
                         >
                           {translationStyle === "auto" && <div className="h-2 w-2 rounded-full bg-white" />}
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2">
-                            <h3 className="font-medium text-transparent bg-clip-text bg-gradient-to-r from-green-600 to-green-800">智能识别</h3>
-                            <Badge variant="outline" className="border-green-200 bg-green-50 text-green-700">推荐</Badge>
+                            <h3 className="font-medium text-green-400">智能识别</h3>
+                            <Badge variant="outline" className="border-green-600 bg-green-950 text-green-400">推荐</Badge>
                           </div>
-                          <p className="text-sm text-gray-500 mt-1">AI 分析模组文件原风格</p>
+                          <p className="text-sm text-zinc-500 mt-1">AI 分析模组文件原风格</p>
                         </div>
                       </div>
                     </div>
@@ -203,7 +196,6 @@ export default function HomePage() {
                 </div>
               ) : (
                 <div className="space-y-6">
-                  {/* 统一使用 RealtimeProgress 显示所有状态 */}
                   {taskStatus ? (
                     <RealtimeProgress
                       taskKey={taskKey}
@@ -217,18 +209,16 @@ export default function HomePage() {
                       queuePosition={taskStatus.queue_position}
                     />
                   ) : (
-                    /* 加载状态 */
                     <div className="hard-card">
                       <div className="p-6">
                         <div className="flex items-center justify-center space-x-3">
-                          <Loader2 className="h-5 w-5 animate-spin text-blue-600" />
-                          <span className="text-blue-600 font-medium uppercase tracking-wide">正在获取任务状态...</span>
+                          <Loader2 className="h-5 w-5 animate-spin text-blue-400" />
+                          <span className="text-blue-400 font-medium uppercase tracking-wide">正在获取任务状态...</span>
                         </div>
                       </div>
                     </div>
                   )}
 
-                  {/* 操作按钮 */}
                   {taskStatus && (
                     <div className="hard-card">
                       <div className="p-6">
@@ -252,7 +242,6 @@ export default function HomePage() {
 
               {taskKey && (
                 <div className="space-y-6">
-                  {/* 统一使用 RealtimeProgress 显示所有状态 */}
                   {taskStatus ? (
                     <RealtimeProgress
                       taskKey={taskKey}
@@ -266,18 +255,16 @@ export default function HomePage() {
                       queuePosition={taskStatus.queue_position}
                     />
                   ) : (
-                    /* 加载状态 */
                     <div className="hard-card">
                       <div className="p-6">
                         <div className="flex items-center justify-center space-x-3">
-                          <Loader2 className="h-5 w-5 animate-spin text-blue-600" />
-                          <span className="text-blue-600 font-medium uppercase tracking-wide">正在获取任务状态...</span>
+                          <Loader2 className="h-5 w-5 animate-spin text-blue-400" />
+                          <span className="text-blue-400 font-medium uppercase tracking-wide">正在获取任务状态...</span>
                         </div>
                       </div>
                     </div>
                   )}
 
-                  {/* 操作按钮 */}
                   {taskStatus && (
                     <div className="hard-card">
                       <div className="p-6">

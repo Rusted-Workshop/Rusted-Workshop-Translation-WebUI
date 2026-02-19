@@ -40,19 +40,19 @@ export const RealtimeProgress = ({
   const getStatusIcon = () => {
     switch (status) {
       case "pending":
-        return <Clock className="h-5 w-5 text-blue-600" />
+        return <Clock className="h-5 w-5 text-blue-400" />
       case "queued":
-        return <Clock className="h-5 w-5 text-yellow-600" />
+        return <Clock className="h-5 w-5 text-yellow-400" />
       case "processing":
-        return <Loader2 className="h-5 w-5 text-green-600 animate-spin" />
+        return <Loader2 className="h-5 w-5 text-green-400 animate-spin" />
       case "completed":
-        return <CheckCircle className="h-5 w-5 text-green-600" />
+        return <CheckCircle className="h-5 w-5 text-green-400" />
       case "failed":
-        return <XCircle className="h-5 w-5 text-red-600" />
+        return <XCircle className="h-5 w-5 text-red-400" />
       case "cancelled":
-        return <XCircle className="h-5 w-5 text-gray-600" />
+        return <XCircle className="h-5 w-5 text-zinc-500" />
       default:
-        return <Activity className="h-5 w-5 text-gray-600" />
+        return <Activity className="h-5 w-5 text-zinc-500" />
     }
   }
 
@@ -78,32 +78,31 @@ export const RealtimeProgress = ({
   const getStatusBadgeClass = () => {
     switch (status) {
       case "completed":
-        return "border-green-500 bg-green-50 text-green-800"
+        return "border-green-600 bg-green-950 text-green-400"
       case "failed":
-        return "border-red-500 bg-red-50 text-red-800"
+        return "border-red-600 bg-red-950 text-red-400"
       case "processing":
-        return "border-blue-500 bg-blue-50 text-blue-800"
+        return "border-blue-600 bg-blue-950 text-blue-400"
       case "pending":
-        return "border-blue-500 bg-blue-50 text-blue-800"
+        return "border-blue-600 bg-blue-950 text-blue-400"
       case "queued":
-        return "border-yellow-500 bg-yellow-50 text-yellow-800"
+        return "border-yellow-600 bg-yellow-950 text-yellow-400"
       default:
-        return "border-gray-500 bg-gray-50 text-gray-800"
+        return "border-zinc-600 bg-zinc-800 text-zinc-400"
     }
   }
 
   return (
     <div className="hard-card">
-      {/* 头部区域 */}
-      <div className="border-b-2 border-green-200 bg-green-50/50 p-4">
+      <div className="border-b-2 border-green-800 bg-green-950/50 p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="p-2 bg-green-100 border-2 border-green-300" style={{ borderRadius: '3px' }}>
+            <div className="p-2 bg-green-900 border-2 border-green-700" style={{ borderRadius: '3px' }}>
               {getStatusIcon()}
             </div>
             <div>
-              <h3 className="text-lg font-bold text-gray-900 uppercase tracking-wide">任务状态</h3>
-              <p className="text-sm text-gray-600 font-medium">TASK MONITOR</p>
+              <h3 className="text-lg font-bold text-white uppercase tracking-wide">任务状态</h3>
+              <p className="text-sm text-zinc-500 font-medium">TASK MONITOR</p>
             </div>
           </div>
           
@@ -115,26 +114,24 @@ export const RealtimeProgress = ({
         </div>
       </div>
 
-      {/* 主体内容 */}
       <div className="p-6 space-y-6">
-        {/* 任务信息区域 */}
-        <div className="hard-card bg-gray-50/50">
-          <div className="border-b-2 border-gray-200 bg-gray-100/50 px-4 py-2">
-            <h4 className="text-sm font-bold text-gray-800 uppercase tracking-wide flex items-center">
+        <div className="hard-card bg-zinc-900/50">
+          <div className="border-b-2 border-zinc-700 bg-zinc-800/50 px-4 py-2">
+            <h4 className="text-sm font-bold text-zinc-300 uppercase tracking-wide flex items-center">
               <Terminal className="h-4 w-4 mr-2" />
               TASK INFO
             </h4>
           </div>
           <div className="p-4 space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-sm font-medium text-gray-600 uppercase">文件名</span>
-              <span className="text-sm font-bold text-gray-900">{fileName}</span>
+              <span className="text-sm font-medium text-zinc-500 uppercase">文件名</span>
+              <span className="text-sm font-bold text-white">{fileName}</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-sm font-medium text-gray-600 uppercase">任务ID</span>
+              <span className="text-sm font-medium text-zinc-500 uppercase">任务ID</span>
               <div className="flex items-center space-x-2">
                 <code 
-                  className="text-xs bg-gray-200 text-gray-800 px-2 py-1 border border-gray-300 font-mono uppercase cursor-pointer hover:bg-gray-300 transition-colors"
+                  className="text-xs bg-zinc-800 text-zinc-300 px-2 py-1 border border-zinc-700 font-mono uppercase cursor-pointer hover:bg-zinc-700 transition-colors"
                   onClick={() => {
                     navigator.clipboard.writeText(taskKey);
                     toast({
@@ -145,7 +142,7 @@ export const RealtimeProgress = ({
                 >
                   {taskKey}
                 </code>
-                <Copy className="h-4 w-4 text-gray-500 cursor-pointer hover:text-gray-700" 
+                <Copy className="h-4 w-4 text-zinc-500 cursor-pointer hover:text-zinc-300" 
                   onClick={() => {
                     navigator.clipboard.writeText(taskKey);
                     toast({
@@ -156,16 +153,15 @@ export const RealtimeProgress = ({
                 />
               </div>
             </div>
-            {/* 队列位置信息 */}
             {(status === "pending" || status === "queued") && queuePosition && queuePosition > 0 && (
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-gray-600 uppercase">队列位置</span>
+                <span className="text-sm font-medium text-zinc-500 uppercase">队列位置</span>
                 <div className="flex items-center space-x-2">
-                  <Badge className="hard-badge border-yellow-500 bg-yellow-50 text-yellow-800">
+                  <Badge className="hard-badge border-yellow-600 bg-yellow-950 text-yellow-400">
                     第 {queuePosition} 位
                   </Badge>
                   {queuePosition === 1 && (
-                    <span className="text-xs text-green-600 font-medium">下一个处理</span>
+                    <span className="text-xs text-green-400 font-medium">下一个处理</span>
                   )}
                 </div>
               </div>
@@ -173,10 +169,9 @@ export const RealtimeProgress = ({
           </div>
         </div>
 
-        {/* 主进度区域 */}
-        <div className="hard-card bg-blue-50/30">
-          <div className="border-b-2 border-blue-200 bg-blue-100/50 px-4 py-2">
-            <h4 className="text-sm font-bold text-blue-800 uppercase tracking-wide flex items-center">
+        <div className="hard-card bg-blue-950/30">
+          <div className="border-b-2 border-blue-800 bg-blue-900/50 px-4 py-2">
+            <h4 className="text-sm font-bold text-blue-400 uppercase tracking-wide flex items-center">
               <Zap className="h-4 w-4 mr-2" />
               进度 PROGRESS
             </h4>
@@ -184,13 +179,13 @@ export const RealtimeProgress = ({
           <div className="p-4 space-y-4">
             <div className="flex justify-between items-center">
               <div className="flex items-center space-x-2">
-                <div className={`w-3 h-3 border-2 ${progress > 0 ? 'bg-green-500 border-green-600' : 'bg-gray-300 border-gray-400'}`} 
+                <div className={`w-3 h-3 border-2 ${progress > 0 ? 'bg-green-500 border-green-600' : 'bg-zinc-700 border-zinc-600'}`} 
                      style={{ borderRadius: '2px' }}></div>
-                <span className="text-lg font-bold text-gray-900 uppercase tracking-wide">总体进度</span>
+                <span className="text-lg font-bold text-white uppercase tracking-wide">总体进度</span>
               </div>
               <div className="text-right">
-                <span className="text-3xl font-bold text-green-600">{progress}</span>
-                <span className="text-lg text-gray-500 font-medium">%</span>
+                <span className="text-3xl font-bold text-green-400">{progress}</span>
+                <span className="text-lg text-zinc-500 font-medium">%</span>
               </div>
             </div>
             
@@ -201,31 +196,30 @@ export const RealtimeProgress = ({
                   style={{ width: `${progress}%` }}
                 ></div>
               </div>
-              <div className="hard-card bg-white p-3">
-                <div className="flex items-center justify-center text-sm font-medium text-gray-700">
-                  <Clock className="h-4 w-4 mr-2 text-green-600" />
-                  <span className="text-gray-600">{currentStep}</span>
+              <div className="hard-card bg-zinc-800 p-3">
+                <div className="flex items-center justify-center text-sm font-medium text-zinc-300">
+                  <Clock className="h-4 w-4 mr-2 text-green-400" />
+                  <span className="text-zinc-400">{currentStep}</span>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* 文件处理进度区域 */}
         {processedFiles !== undefined && totalFiles !== undefined && (
-          <div className="hard-card bg-purple-50/30">
-            <div className="border-b-2 border-purple-200 bg-purple-100/50 px-4 py-2">
-              <h4 className="text-sm font-bold text-purple-800 uppercase tracking-wide flex items-center">
+          <div className="hard-card bg-purple-950/30">
+            <div className="border-b-2 border-purple-800 bg-purple-900/50 px-4 py-2">
+              <h4 className="text-sm font-bold text-purple-400 uppercase tracking-wide flex items-center">
                 <FileText className="h-4 w-4 mr-2" />
                 文件处理进度 FILE PROCESSING
               </h4>
             </div>
             <div className="p-4 space-y-4">
               <div className="flex items-center justify-between">
-                <span className="text-lg font-bold text-gray-900 uppercase tracking-wide">文件进度</span>
+                <span className="text-lg font-bold text-white uppercase tracking-wide">文件进度</span>
                 <div className="text-right">
-                  <span className="text-2xl font-bold text-purple-600">{processedFiles}</span>
-                  <span className="text-lg text-gray-500 font-medium"> / {totalFiles}</span>
+                  <span className="text-2xl font-bold text-purple-400">{processedFiles}</span>
+                  <span className="text-lg text-zinc-500 font-medium"> / {totalFiles}</span>
                 </div>
               </div>
               
@@ -236,7 +230,7 @@ export const RealtimeProgress = ({
                     style={{ width: `${(processedFiles / totalFiles) * 100}%` }}
                   ></div>
                 </div>
-                <div className="flex justify-between text-sm font-medium text-gray-600 uppercase tracking-wide">
+                <div className="flex justify-between text-sm font-medium text-zinc-500 uppercase tracking-wide">
                   <span>已处理文件</span>
                   <span>{Math.round((processedFiles / totalFiles) * 100)}% 完成</span>
                 </div>
@@ -245,22 +239,21 @@ export const RealtimeProgress = ({
           </div>
         )}
 
-        {/* 状态消息区域 */}
-        <div className="hard-card bg-yellow-50/30">
-          <div className="border-b-2 border-yellow-200 bg-yellow-100/50 px-4 py-2">
-            <h4 className="text-sm font-bold text-yellow-800 uppercase tracking-wide flex items-center">
+        <div className="hard-card bg-yellow-950/30">
+          <div className="border-b-2 border-yellow-800 bg-yellow-900/50 px-4 py-2">
+            <h4 className="text-sm font-bold text-yellow-400 uppercase tracking-wide flex items-center">
               <Activity className="h-4 w-4 mr-2" />
               状态信息 STATUS MESSAGE
             </h4>
           </div>
           <div className="p-4">
             <div className="flex items-start space-x-3">
-              <div className="p-2 bg-yellow-100 border-2 border-yellow-300" style={{ borderRadius: '3px' }}>
-                <Clock className="h-4 w-4 text-yellow-600" />
+              <div className="p-2 bg-yellow-900 border-2 border-yellow-700" style={{ borderRadius: '3px' }}>
+                <Clock className="h-4 w-4 text-yellow-400" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-800 leading-relaxed">{message}</p>
-                <p className="text-xs text-gray-500 mt-2 flex items-center font-medium uppercase tracking-wide">
+                <p className="text-sm font-medium text-zinc-300 leading-relaxed">{message}</p>
+                <p className="text-xs text-zinc-500 mt-2 flex items-center font-medium uppercase tracking-wide">
                   <span className="w-2 h-2 bg-green-500 mr-2 border border-green-600" style={{ borderRadius: '1px' }}></span>
                   LAST UPDATE: {new Date().toLocaleTimeString("zh-CN")}
                 </p>

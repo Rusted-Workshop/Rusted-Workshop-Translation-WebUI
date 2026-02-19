@@ -28,11 +28,11 @@ export const ActionButtons = ({ taskKey, taskStatus, onDownload, onReset, onCanc
   const getStatusIcon = () => {
     switch (taskStatus.status) {
       case "completed":
-        return <CheckCircle className="h-4 w-4 text-green-600" />
+        return <CheckCircle className="h-4 w-4 text-green-400" />
       case "failed":
-        return <XCircle className="h-4 w-4 text-red-600" />
+        return <XCircle className="h-4 w-4 text-red-400" />
       default:
-        return <Settings className="h-4 w-4 text-blue-600" />
+        return <Settings className="h-4 w-4 text-blue-400" />
     }
   }
 
@@ -49,9 +49,9 @@ export const ActionButtons = ({ taskKey, taskStatus, onDownload, onReset, onCanc
 
   if (taskStatus.status === "completed") {
     return (
-      <div className="hard-card bg-green-50/30">
-        <div className="border-b-2 border-green-200 bg-green-100/50 px-4 py-2">
-          <h4 className="text-sm font-bold text-green-800 uppercase tracking-wide flex items-center">
+      <div className="hard-card bg-green-950/30">
+        <div className="border-b-2 border-green-800 bg-green-900/50 px-4 py-2">
+          <h4 className="text-sm font-bold text-green-400 uppercase tracking-wide flex items-center">
             {getStatusIcon()}
             <span className="ml-2">{getStatusText()}</span>
           </h4>
@@ -68,7 +68,7 @@ export const ActionButtons = ({ taskKey, taskStatus, onDownload, onReset, onCanc
             </Button>
             <Button 
               onClick={onReset} 
-              className="border-2 border-green-400 bg-green-50 text-green-700 hover:bg-green-100 hover:border-green-500 font-bold uppercase tracking-wide"
+              className="border-2 border-green-600 bg-green-950 text-green-400 hover:bg-green-900 hover:border-green-500 font-bold uppercase tracking-wide"
               style={{ borderRadius: '4px' }}
             >
               新任务
@@ -76,7 +76,7 @@ export const ActionButtons = ({ taskKey, taskStatus, onDownload, onReset, onCanc
           </div>
           <Button 
             onClick={copyTaskId} 
-            className="w-full border-2 border-gray-300 bg-gray-50 text-gray-700 hover:bg-gray-100 hover:border-gray-400 text-xs font-bold uppercase tracking-wide"
+            className="w-full border-2 border-zinc-700 bg-zinc-800 text-zinc-300 hover:bg-zinc-700 hover:border-zinc-600 text-xs font-bold uppercase tracking-wide"
             style={{ borderRadius: '4px' }}
           >
             <Copy className="h-3 w-3 mr-2" />
@@ -89,9 +89,9 @@ export const ActionButtons = ({ taskKey, taskStatus, onDownload, onReset, onCanc
 
   if (taskStatus.status === "failed") {
     return (
-      <div className="hard-card bg-red-50/30">
-        <div className="border-b-2 border-red-200 bg-red-100/50 px-4 py-2">
-          <h4 className="text-sm font-bold text-red-800 uppercase tracking-wide flex items-center">
+      <div className="hard-card bg-red-950/30">
+        <div className="border-b-2 border-red-800 bg-red-900/50 px-4 py-2">
+          <h4 className="text-sm font-bold text-red-400 uppercase tracking-wide flex items-center">
             {getStatusIcon()}
             <span className="ml-2">{getStatusText()}</span>
           </h4>
@@ -108,7 +108,7 @@ export const ActionButtons = ({ taskKey, taskStatus, onDownload, onReset, onCanc
             {onRetry && (
               <Button 
                 onClick={onRetry} 
-                className="border-2 border-blue-400 bg-blue-50 text-blue-700 hover:bg-blue-100 hover:border-blue-500 font-bold uppercase tracking-wide"
+                className="border-2 border-blue-600 bg-blue-950 text-blue-400 hover:bg-blue-900 hover:border-blue-500 font-bold uppercase tracking-wide"
                 style={{ borderRadius: '4px' }}
               >
                 <RotateCcw className="h-4 w-4 mr-2" />
@@ -118,7 +118,7 @@ export const ActionButtons = ({ taskKey, taskStatus, onDownload, onReset, onCanc
           </div>
           <Button 
             onClick={copyTaskId} 
-            className="w-full border-2 border-gray-300 bg-gray-50 text-gray-700 hover:bg-gray-100 hover:border-gray-400 text-xs font-bold uppercase tracking-wide"
+            className="w-full border-2 border-zinc-700 bg-zinc-800 text-zinc-300 hover:bg-zinc-700 hover:border-zinc-600 text-xs font-bold uppercase tracking-wide"
             style={{ borderRadius: '4px' }}
           >
             <Copy className="h-3 w-3 mr-2" />
@@ -130,9 +130,9 @@ export const ActionButtons = ({ taskKey, taskStatus, onDownload, onReset, onCanc
   }
 
   return (
-    <div className="hard-card bg-blue-50/30">
-      <div className="border-b-2 border-blue-200 bg-blue-100/50 px-4 py-2">
-        <h4 className="text-sm font-bold text-blue-800 uppercase tracking-wide flex items-center">
+    <div className="hard-card bg-blue-950/30">
+      <div className="border-b-2 border-blue-800 bg-blue-900/50 px-4 py-2">
+        <h4 className="text-sm font-bold text-blue-400 uppercase tracking-wide flex items-center">
           {getStatusIcon()}
           <span className="ml-2">{getStatusText()}</span>
         </h4>
@@ -140,14 +140,14 @@ export const ActionButtons = ({ taskKey, taskStatus, onDownload, onReset, onCanc
       <div className="p-4 space-y-3">
         <Button 
           onClick={onCancel} 
-          className="w-full border-2 border-red-400 bg-red-50 text-red-700 hover:bg-red-100 hover:border-red-500 font-bold uppercase tracking-wide"
+          className="w-full border-2 border-red-600 bg-red-950 text-red-400 hover:bg-red-900 hover:border-red-500 font-bold uppercase tracking-wide"
           style={{ borderRadius: '4px' }}
         >
           取消任务
         </Button>
         <Button 
           onClick={copyTaskId} 
-          className="w-full border-2 border-gray-300 bg-gray-50 text-gray-700 hover:bg-gray-100 hover:border-gray-400 text-xs font-bold uppercase tracking-wide"
+          className="w-full border-2 border-zinc-700 bg-zinc-800 text-zinc-300 hover:bg-zinc-700 hover:border-zinc-600 text-xs font-bold uppercase tracking-wide"
           style={{ borderRadius: '4px' }}
         >
           <Copy className="h-3 w-3 mr-2" />

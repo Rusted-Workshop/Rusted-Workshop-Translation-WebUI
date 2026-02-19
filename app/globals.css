@@ -4,29 +4,6 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 142 76% 36%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96%;
-    --secondary-foreground: 222.2 84% 4.9%;
-    --muted: 210 40% 96%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96%;
-    --accent-foreground: 222.2 84% 4.9%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 142 76% 36%;
-    --radius: 0.5rem;
-  }
-
-  .dark {
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
     --card: 222.2 84% 4.9%;
@@ -46,6 +23,7 @@
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 142 76% 36%;
+    --radius: 0.5rem;
   }
 }
 
@@ -60,33 +38,33 @@
 
 @layer utilities {
   .blueprint-grid {
-    background-color: #f8fdf9;
+    background-color: #09090b;
     background-image: 
-      linear-gradient(rgba(34, 197, 94, 0.1) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(34, 197, 94, 0.1) 1px, transparent 1px),
-      linear-gradient(rgba(34, 197, 94, 0.05) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(34, 197, 94, 0.05) 1px, transparent 1px);
+      linear-gradient(rgba(34, 197, 94, 0.15) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(34, 197, 94, 0.15) 1px, transparent 1px),
+      linear-gradient(rgba(34, 197, 94, 0.08) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(34, 197, 94, 0.08) 1px, transparent 1px);
     background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
     background-position: -1px -1px, -1px -1px, -1px -1px, -1px -1px;
   }
   
   .hard-card {
-    @apply border-2 border-green-300/60 bg-white/95 backdrop-blur-sm;
+    @apply border-2 border-green-800/60 bg-zinc-900/95 backdrop-blur-sm;
     border-radius: 4px;
     box-shadow: 
-      0 1px 3px rgba(0, 0, 0, 0.05),
-      0 0 0 1px rgba(34, 197, 94, 0.1),
-      inset 0 1px 0 rgba(255, 255, 255, 0.6);
+      0 1px 3px rgba(0, 0, 0, 0.3),
+      0 0 0 1px rgba(34, 197, 94, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
   }
   
   .hard-progress {
-    @apply bg-gray-200 border border-gray-300;
+    @apply bg-zinc-800 border border-zinc-700;
     border-radius: 2px;
     overflow: hidden;
   }
   
   .hard-badge {
-    @apply border-2 border-green-400 bg-green-50 text-green-800;
+    @apply border-2 border-green-600 bg-green-950 text-green-300;
     border-radius: 3px;
     font-weight: 600;
     text-transform: uppercase;

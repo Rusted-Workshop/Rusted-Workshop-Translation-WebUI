@@ -1,36 +1,15 @@
-import { type NextRequest, NextResponse } from "next/server"
+﻿import { NextResponse } from "next/server"
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000"
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8001"
 
-export async function GET(request: NextRequest) {
-  try {
-    const backendUrl = `${API_BASE_URL}/api/config/public`
-    console.log("Fetching public config from:", backendUrl)
-
-    const response = await fetch(backendUrl, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-
-    if (!response.ok) {
-      throw new Error(`Backend responded with status: ${response.status}`)
-    }
-
-    const data = await response.json()
-    console.log("Public config response:", data)
-
-    return NextResponse.json(data)
-  } catch (error) {
-    console.error("API Error:", error)
-    return NextResponse.json(
-      {
-        success: false,
-        message: error instanceof Error ? error.message : "Failed to fetch public config",
-        error_code: "API_ERROR",
-      },
-      { status: 500 },
-    )
-  }
+export async function GET() {
+  return NextResponse.json({
+    success: true,
+    data: {
+      service_name: "Rusted Workshop Translation API",
+      api_base_url: API_BASE_URL,
+      api_version: "v1",
+      websocket_enabled: false,
+    },
+  })
 }

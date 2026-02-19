@@ -1,11 +1,11 @@
-import type { ApiResponse, TaskStatus } from "@/types"
+﻿import type { ApiResponse, TaskStatus } from "@/types"
 
 export const api = {
   async createTask(file: File, translateStyle: string, targetLanguage: string = "zh-CN"): Promise<ApiResponse<string>> {
     const formData = new FormData()
     formData.append("file", file)
 
-    const response = await fetch(`/api/tasks/?target_language=${targetLanguage}&translate_style=${translateStyle}`, {
+    const response = await fetch(`/api/tasks?target_language=${targetLanguage}&translate_style=${translateStyle}`, {
       method: "POST",
       body: formData,
     })
@@ -51,7 +51,7 @@ export const api = {
     status?: string
     language?: string
   }): Promise<ApiResponse<any[]>> {
-    const url = new URL("/api/tasks/", window.location.origin)
+    const url = new URL("/api/tasks", window.location.origin)
     if (params?.page) url.searchParams.set("page", params.page.toString())
     if (params?.limit) url.searchParams.set("limit", params.limit.toString())
     if (params?.status) url.searchParams.set("status", params.status)
@@ -63,7 +63,7 @@ export const api = {
 
     // 新增：批量取消任务
   async batchCancelTasks(taskKeys: string[]): Promise<ApiResponse> {
-    const response = await fetch("/api/tasks/", {
+    const response = await fetch("/api/tasks", {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -97,3 +97,4 @@ export const api = {
     return response.json()
   },
 }
+

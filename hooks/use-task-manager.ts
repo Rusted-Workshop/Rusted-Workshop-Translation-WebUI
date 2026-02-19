@@ -192,7 +192,7 @@ export const useTaskManager = () => {
     setFileName("")
   }
 
-  // 只有在没有WebSocket连接时才使用轮询
+  // 轮询任务状态
   useEffect(() => {
     if (taskKey && taskStatus?.status !== "completed" && taskStatus?.status !== "failed") {
       const interval = setInterval(checkTaskStatus, POLL_INTERVAL)

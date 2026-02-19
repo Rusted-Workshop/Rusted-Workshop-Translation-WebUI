@@ -1,10 +1,7 @@
 "use client"
 
 import { Badge } from "@/components/ui/badge"
-import { Alert, AlertDescription } from "@/components/ui/alert"
 import { 
-  Wifi, 
-  WifiOff, 
   Clock, 
   FileText, 
   Activity, 
@@ -26,8 +23,6 @@ interface RealtimeProgressProps {
   processedFiles?: number
   totalFiles?: number
   status: string
-  isConnected: boolean
-  connectionError?: string | null
   queuePosition?: number | null
 }
 
@@ -40,8 +35,6 @@ export const RealtimeProgress = ({
   processedFiles,
   totalFiles,
   status,
-  isConnected,
-  connectionError,
   queuePosition,
 }: RealtimeProgressProps) => {
   const getStatusIcon = () => {
@@ -115,10 +108,6 @@ export const RealtimeProgress = ({
           </div>
           
           <div className="flex items-center space-x-3">
-            <Badge className={`hard-badge ${isConnected ? 'border-green-500 bg-green-50 text-green-800' : 'border-red-500 bg-red-50 text-red-800'}`}>
-              {isConnected ? <Wifi className="h-3 w-3 mr-1" /> : <WifiOff className="h-3 w-3 mr-1" />}
-              {isConnected ? "ONLINE" : "OFFLINE"}
-            </Badge>
             <Badge className={`hard-badge ${getStatusBadgeClass()}`}>
               {getStatusText()}
             </Badge>
@@ -128,14 +117,6 @@ export const RealtimeProgress = ({
 
       {/* 主体内容 */}
       <div className="p-6 space-y-6">
-        {/* 连接错误提示 */}
-        {connectionError && (
-          <Alert variant="destructive" className="border-2 border-red-400 bg-red-50" style={{ borderRadius: '4px' }}>
-            <WifiOff className="h-4 w-4" />
-            <AlertDescription className="font-medium">{connectionError}</AlertDescription>
-          </Alert>
-        )}
-
         {/* 任务信息区域 */}
         <div className="hard-card bg-gray-50/50">
           <div className="border-b-2 border-gray-200 bg-gray-100/50 px-4 py-2">

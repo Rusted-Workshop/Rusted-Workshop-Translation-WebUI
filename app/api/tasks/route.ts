@@ -1,6 +1,82 @@
-import { type NextRequest, NextResponse } from "next/server"
+﻿import { type NextRequest, NextResponse } from "next/server"
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000"
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8001"
+
+type BackendTask = {
+  task_id: string
+  status: string
+  progress?: number
+  total_files?: number
+  processed_files?: number
+  error_message?: string | null
+  created_at?: string
+  completed_at?: string | null
+}
+
+function mapStatus(status: string): "pending" | "processing" | "completed" | "failed" | "cancelled" {
+  switch (status) {
+    case "pending":
+      return "pending"
+    case "preparing":
+    case "translating":
+    case "finalizing":
+      return "processing"
+    case "completed":
+      return "completed"
+    case "failed":
+      return "failed"
+    default:
+      return "pending"
+  }
+}
+
+function getTaskMessage(task: BackendTask): string {
+  if (task.status === "failed") {
+    return task.error_message || "任务处理失败"
+  }
+  if (task.status === "completed") {
+    return "任务处理完成"
+  }
+  if (task.status === "preparing") {
+    return "正在准备文件"
+  }
+  if (task.status === "translating") {
+    return "正在翻译文件"
+  }
+  if (task.status === "finalizing") {
+    return "正在打包结果"
+  }
+  return "任务等待处理中"
+}
+
+function normalizeTask(task: BackendTask) {
+  return {
+    task_key: task.task_id,
+    status: mapStatus(task.status),
+    progress: Math.round((task.progress || 0) * 100) / 100,
+    message: getTaskMessage(task),
+    total_files: task.total_files || 0,
+    processed_files: task.processed_files || 0,
+    created_at: task.created_at,
+    completed_at: task.completed_at || null,
+    error_message: task.error_message || null,
+  }
+}
+
+async function parseBackendError(response: Response): Promise<string> {
+  try {
+    const payload = await response.json()
+    if (payload?.detail?.message) {
+      return payload.detail.message
+    }
+    if (payload?.message) {
+      return payload.message
+    }
+  } catch {
+    // ignore json parsing failure
+  }
+  return `后端服务错误 (${response.status})`
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -14,6 +90,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
+          data: null,
           message: "未找到上传的文件",
           error_code: "NO_FILE",
         },
@@ -21,41 +98,42 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // 创建新的 FormData 并添加参数
     const backendFormData = new FormData()
     backendFormData.append("file", file)
+    backendFormData.append("target_language", targetLanguage)
+    backendFormData.append("translate_style", translateStyle)
 
-    // 构建后端 URL
-    const backendUrl = new URL("/api/tasks/", API_BASE_URL)
-    backendUrl.searchParams.set("target_language", targetLanguage)
-    backendUrl.searchParams.set("translate_style", translateStyle)
-
-    console.log("Sending request to:", backendUrl.toString())
-
-    const response = await fetch(backendUrl.toString(), {
+    const backendUrl = `${API_BASE_URL}/v1/tasks`
+    const response = await fetch(backendUrl, {
       method: "POST",
       body: backendFormData,
     })
 
     if (!response.ok) {
-      const errorText = await response.text()
-      console.error("Backend error response:", {
-        status: response.status,
-        statusText: response.statusText,
-        body: errorText,
-      })
-      throw new Error(`后端服务错误 (${response.status}): ${response.statusText}`)
+      const message = await parseBackendError(response)
+      return NextResponse.json(
+        {
+          success: false,
+          data: null,
+          message,
+          error_code: "BACKEND_ERROR",
+        },
+        { status: response.status },
+      )
     }
 
-    const data = await response.json()
-    console.log("Backend response:", data)
+    const task = (await response.json()) as BackendTask
 
-    return NextResponse.json(data)
+    return NextResponse.json({
+      success: true,
+      data: task.task_id,
+      task: normalizeTask(task),
+    })
   } catch (error) {
-    console.error("API Error:", error)
     return NextResponse.json(
       {
         success: false,
+        data: null,
         message: error instanceof Error ? error.message : "Internal server error",
         error_code: "API_ERROR",
       },
@@ -67,18 +145,12 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams
-    const page = searchParams.get("page") || "1"
-    const limit = searchParams.get("limit") || "10"
-    const status = searchParams.get("status")
-    const language = searchParams.get("language")
+    const page = Number(searchParams.get("page") || "1")
+    const limit = Number(searchParams.get("limit") || "10")
 
-    const backendUrl = new URL("/api/tasks/", API_BASE_URL)
-    backendUrl.searchParams.set("page", page)
-    backendUrl.searchParams.set("limit", limit)
-    if (status) backendUrl.searchParams.set("status", status)
-    if (language) backendUrl.searchParams.set("language", language)
-
-    console.log("Fetching tasks from:", backendUrl.toString())
+    const backendUrl = new URL(`${API_BASE_URL}/v1/tasks`)
+    backendUrl.searchParams.set("limit", String(limit))
+    backendUrl.searchParams.set("offset", String(Math.max(0, (page - 1) * limit)))
 
     const response = await fetch(backendUrl.toString(), {
       method: "GET",
@@ -88,18 +160,33 @@ export async function GET(request: NextRequest) {
     })
 
     if (!response.ok) {
-      throw new Error(`Backend responded with status: ${response.status}`)
+      const message = await parseBackendError(response)
+      return NextResponse.json(
+        {
+          success: false,
+          data: [],
+          message,
+          error_code: "BACKEND_ERROR",
+        },
+        { status: response.status },
+      )
     }
 
-    const data = await response.json()
-    console.log("Tasks list response:", data)
+    const data = (await response.json()) as BackendTask[]
+    const tasks = Array.isArray(data) ? data.map(normalizeTask) : []
 
-    return NextResponse.json(data)
+    return NextResponse.json({
+      success: true,
+      data: tasks,
+      page,
+      limit,
+      total: tasks.length,
+    })
   } catch (error) {
-    console.error("API Error:", error)
     return NextResponse.json(
       {
         success: false,
+        data: [],
         message: error instanceof Error ? error.message : "Failed to fetch tasks",
         error_code: "API_ERROR",
       },
@@ -110,32 +197,51 @@ export async function GET(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   try {
-    const taskKeys = await request.json()
-    const backendUrl = `${API_BASE_URL}/api/tasks/`
-
-    console.log("Batch cancelling tasks:", taskKeys)
-
-    const response = await fetch(backendUrl, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(taskKeys),
-    })
-
-    if (!response.ok) {
-      throw new Error(`Backend responded with status: ${response.status}`)
+    const taskKeys = (await request.json()) as string[]
+    if (!Array.isArray(taskKeys)) {
+      return NextResponse.json(
+        {
+          success: false,
+          data: null,
+          message: "请求体必须是任务ID数组",
+          error_code: "INVALID_PAYLOAD",
+        },
+        { status: 400 },
+      )
     }
 
-    const data = await response.json()
-    console.log("Batch cancel response:", data)
+    const results = await Promise.all(
+      taskKeys.map(async (taskKey) => {
+        const response = await fetch(`${API_BASE_URL}/v1/tasks/${taskKey}`, {
+          method: "DELETE",
+        })
+        return {
+          taskKey,
+          ok: response.ok,
+          status: response.status,
+        }
+      }),
+    )
 
-    return NextResponse.json(data)
+    const successList = results.filter((item) => item.ok).map((item) => item.taskKey)
+    const failedList = results.filter((item) => !item.ok)
+
+    return NextResponse.json(
+      {
+        success: failedList.length === 0,
+        data: {
+          cancelled: successList,
+          failed: failedList,
+        },
+        message: failedList.length === 0 ? "批量取消成功" : "部分任务取消失败",
+      },
+      { status: failedList.length === 0 ? 200 : 207 },
+    )
   } catch (error) {
-    console.error("API Error:", error)
     return NextResponse.json(
       {
         success: false,
+        data: null,
         message: error instanceof Error ? error.message : "Failed to cancel tasks",
         error_code: "API_ERROR",
       },

@@ -15,7 +15,6 @@ import { ActionButtons } from "@/components/action-buttons"
 import { TaskIdInput } from "@/components/task-id-input"
 import { RealtimeProgress } from "@/components/realtime-progress"
 import { useTaskManager } from "@/hooks/use-task-manager"
-import { useTaskWebSocket } from "@/hooks/use-task-websocket"
 import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
 import { Label } from "@/components/ui/label"
@@ -63,16 +62,7 @@ export default function HomePage() {
     reset,
   } = useTaskManager()
 
-  const {
-    isConnected,
-    progress,
-    currentStep,
-    message: wsMessage,
-    processedFiles,
-    totalFiles,
-    status: wsStatus,
-    connectionError,
-  } = useTaskWebSocket(taskKey)
+
 
   const handleUpload = () => {
     if (!file) return
@@ -101,9 +91,8 @@ export default function HomePage() {
     downloadResult(fileName)
   }
 
-  // 使用WebSocket状态优先，回退到HTTP轮询状态
-  const currentStatus = wsStatus || taskStatus?.status || ""
-  const currentMessage = wsMessage || taskStatus?.message || ""
+  const currentStatus = taskStatus?.status || ""
+  const currentMessage = taskStatus?.message || ""
 
   return (
     <div className="min-h-screen blueprint-grid">
@@ -219,14 +208,12 @@ export default function HomePage() {
                     <RealtimeProgress
                       taskKey={taskKey}
                       fileName={fileName}
-                      progress={isConnected ? progress : (taskStatus.progress || 0)}
-                      currentStep={isConnected ? currentStep : "轮询状态中..."}
-                      message={isConnected ? currentMessage : (taskStatus.message || "正在轮询获取任务状态...")}
-                      processedFiles={isConnected ? processedFiles : taskStatus.processed_files}
-                      totalFiles={isConnected ? totalFiles : taskStatus.total_files}
+                      progress={taskStatus.progress || 0}
+                      currentStep={taskStatus.message || "处理中..."}
+                      message={taskStatus.message || "正在获取任务状态..."}
+                      processedFiles={taskStatus.processed_files}
+                      totalFiles={taskStatus.total_files}
                       status={currentStatus}
-                      isConnected={isConnected}
-                      connectionError={isConnected ? connectionError : "WebSocket连接断开，使用轮询模式获取状态"}
                       queuePosition={taskStatus.queue_position}
                     />
                   ) : (
@@ -270,14 +257,12 @@ export default function HomePage() {
                     <RealtimeProgress
                       taskKey={taskKey}
                       fileName={fileName}
-                      progress={isConnected ? progress : (taskStatus.progress || 0)}
-                      currentStep={isConnected ? currentStep : "轮询状态中..."}
-                      message={isConnected ? currentMessage : (taskStatus.message || "正在轮询获取任务状态...")}
-                      processedFiles={isConnected ? processedFiles : taskStatus.processed_files}
-                      totalFiles={isConnected ? totalFiles : taskStatus.total_files}
+                      progress={taskStatus.progress || 0}
+                      currentStep={taskStatus.message || "处理中..."}
+                      message={taskStatus.message || "正在获取任务状态..."}
+                      processedFiles={taskStatus.processed_files}
+                      totalFiles={taskStatus.total_files}
                       status={currentStatus}
-                      isConnected={isConnected}
-                      connectionError={isConnected ? connectionError : "WebSocket连接断开，使用轮询模式获取状态"}
                       queuePosition={taskStatus.queue_position}
                     />
                   ) : (

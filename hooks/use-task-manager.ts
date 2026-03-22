@@ -13,7 +13,22 @@ export const useTaskManager = () => {
   const [isUploading, setIsUploading] = useState(false)
   const [isRestoring, setIsRestoring] = useState(false)
   const [fileName, setFileName] = useState<string>("")
+  const [targetLanguage, setTargetLanguage] = useState<string>("")
   const { toast } = useToast()
+
+  const getLanguageSuffix = (languageCode?: string) => {
+    const normalized = languageCode?.trim().toLowerCase()
+    if (!normalized) {
+      return "translated"
+    }
+
+    return normalized.split("-")[0] || "translated"
+  }
+
+  const buildDownloadFilename = (sourceFilename: string, languageCode?: string) => {
+    const baseName = sourceFilename.replace(/\.rwmod$/i, "")
+    return `${baseName}_${getLanguageSuffix(languageCode)}.rwmod`
+  }
 
   const createTask = async (file: File, translateStyle: string, targetLanguage: string = "zh-CN") => {
     setIsUploading(true)
@@ -39,6 +54,7 @@ export const useTaskManager = () => {
           console.log("Setting taskKey to:", taskKeyStr)
           setTaskKey(taskKeyStr)
         setFileName(file.name)
+        setTargetLanguage(targetLanguage)
         toast({
           title: "上传成功",
           description: "模组文件已上传，开始处理中...",
@@ -66,6 +82,7 @@ export const useTaskManager = () => {
         setTaskKey(taskId)
         setTaskStatus(result.data)
         setFileName(result.data.filename || `task_${taskId}`)
+        setTargetLanguage(result.data.target_language || "")
         toast({
           title: "任务恢复成功",
           description: `已恢复任务 ${taskId}`,
@@ -92,6 +109,9 @@ export const useTaskManager = () => {
 
       if (result.success) {
         setTaskStatus(result.data)
+        if (result.data.target_language) {
+          setTargetLanguage(result.data.target_language)
+        }
 
         if (result.data.status === "completed") {
           toast({
@@ -119,9 +139,7 @@ export const useTaskManager = () => {
 
       if (response.ok) {
         const blob = await response.blob()
-        const downloadFilename = filename
-          ? `${filename.replace(".rwmod", "")}_汉化版.rwmod`
-          : `${fileName.replace(".rwmod", "")}_汉化版.rwmod`
+        const downloadFilename = buildDownloadFilename(filename || fileName, targetLanguage)
         downloadFile(blob, downloadFilename)
 
         toast({
@@ -190,6 +208,7 @@ export const useTaskManager = () => {
     setTaskKey("")
     setTaskStatus(null)
     setFileName("")
+    setTargetLanguage("")
   }
 
   // 轮询任务状态

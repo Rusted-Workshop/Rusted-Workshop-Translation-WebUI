@@ -8,6 +8,7 @@ type BackendTask = {
   processed_files?: number
   queue_position?: number | null
   filename?: string
+  target_language?: string
   error_message?: string | null
   created_at?: string
   completed_at?: string | null
@@ -87,6 +88,7 @@ function normalizeTask(task: BackendTask): TaskStatus {
     processed_files: task.processed_files || 0,
     queue_position: task.queue_position ?? undefined,
     filename: task.filename,
+    target_language: task.target_language,
     created_at: task.created_at,
     completed_at: task.completed_at || null,
     error_message: task.error_message || null,

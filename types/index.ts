@@ -7,6 +7,7 @@ export interface TaskStatus {
   estimated_time?: number
   estimated_remaining?: string
   filename?: string
+  target_language?: string
   total_files?: number
   processed_files?: number
   created_at?: string

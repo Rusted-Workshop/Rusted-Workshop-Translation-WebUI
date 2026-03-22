@@ -3,9 +3,9 @@
 import { useState, useEffect, useCallback } from "react"
 import { useToast } from "@/hooks/use-toast"
 import { api } from "@/lib/api"
-import { downloadFile, downloadFileFromUrl } from "@/lib/utils/file"
 import { POLL_INTERVAL } from "@/constants"
 import type { TaskStatus } from "@/types"
+import { useI18n } from "@/components/i18n-provider"
 
 export const useTaskManager = () => {
   const [taskKey, setTaskKey] = useState<string>("")
@@ -15,48 +15,29 @@ export const useTaskManager = () => {
   const [fileName, setFileName] = useState<string>("")
   const [, setTargetLanguage] = useState<string>("")
   const { toast } = useToast()
-
-  const buildDownloadFilename = (sourceFilename: string) => {
-    const baseName = sourceFilename.replace(/\.rwmod$/i, "")
-    return `${baseName}_translated.rwmod`
-  }
+  const { t } = useI18n()
 
   const createTask = async (file: File, translateStyle: string, targetLanguage: string = "zh-CN") => {
     setIsUploading(true)
     try {
       const result = await api.createTask(file, translateStyle, targetLanguage)
-      console.log("Create task result:", result)
-      console.log("Result data type:", typeof result.data)
-      console.log("Result data:", result.data)
 
-              if (result.success) {
-          // 确保 taskKey 是字符串
-          let taskKeyStr: string
-          if (typeof result.data === 'string') {
-            taskKeyStr = result.data
-          } else if (result.data && typeof result.data === 'object' && 'task_key' in result.data) {
-            // 如果返回的是对象，尝试提取 task_key
-            taskKeyStr = (result.data as any).task_key
-            console.log("Extracted task_key from object:", taskKeyStr)
-          } else {
-            taskKeyStr = String(result.data)
-            console.log("Converted to string:", taskKeyStr)
-          }
-          console.log("Setting taskKey to:", taskKeyStr)
-          setTaskKey(taskKeyStr)
-        setFileName(file.name)
-        setTargetLanguage(targetLanguage)
-        toast({
-          title: "上传成功",
-          description: "模组文件已上传，开始处理中...",
-        })
-      } else {
-        throw new Error(result.message || "上传失败")
+      if (!result.success) {
+        throw new Error(result.message || t("taskManager.uploadFailed"))
       }
+
+      setTaskKey(result.data)
+      setFileName(file.name)
+      setTargetLanguage(targetLanguage)
+
+      toast({
+        title: t("taskManager.uploadSuccess"),
+        description: t("taskManager.uploadSuccessDescription"),
+      })
     } catch (error) {
       toast({
-        title: "上传失败",
-        description: error instanceof Error ? error.message : "请稍后重试",
+        title: t("taskManager.uploadFailed"),
+        description: error instanceof Error ? error.message : t("taskManager.retryLater"),
         variant: "destructive",
       })
     } finally {
@@ -69,22 +50,23 @@ export const useTaskManager = () => {
     try {
       const result = await api.getTaskStatus(taskId)
 
-      if (result.success) {
-        setTaskKey(taskId)
-        setTaskStatus(result.data)
-        setFileName(result.data.filename || `task_${taskId}`)
-        setTargetLanguage(result.data.target_language || "")
-        toast({
-          title: "任务恢复成功",
-          description: `已恢复任务 ${taskId}`,
-        })
-      } else {
-        throw new Error(result.message || "任务不存在或已过期")
+      if (!result.success) {
+        throw new Error(result.message || t("taskManager.taskNotFound"))
       }
+
+      setTaskKey(taskId)
+      setTaskStatus(result.data)
+      setFileName(result.data.filename || `task_${taskId}`)
+      setTargetLanguage(result.data.target_language || "")
+
+      toast({
+        title: t("taskManager.restoreSuccess"),
+        description: t("taskManager.restoreSuccessDescription", { taskId }),
+      })
     } catch (error) {
       toast({
-        title: "恢复失败",
-        description: error instanceof Error ? error.message : "无法找到该任务",
+        title: t("taskManager.restoreFailed"),
+        description: error instanceof Error ? error.message : t("taskManager.cannotFindTask"),
         variant: "destructive",
       })
     } finally {
@@ -98,59 +80,47 @@ export const useTaskManager = () => {
     try {
       const result = await api.getTaskStatus(taskKey)
 
-      if (result.success) {
-        setTaskStatus(result.data)
-        if (result.data.target_language) {
-          setTargetLanguage(result.data.target_language)
-        }
+      if (!result.success) {
+        return
+      }
 
-        if (result.data.status === "completed") {
-          toast({
-            title: "汉化完成",
-            description: "你的模组已成功汉化，可以下载了！",
-          })
-        } else if (result.data.status === "failed") {
-          toast({
-            title: "汉化失败",
-            description: result.data.message || "处理过程中出现错误",
-            variant: "destructive",
-          })
-        }
+      setTaskStatus(result.data)
+      if (result.data.target_language) {
+        setTargetLanguage(result.data.target_language)
+      }
+
+      if (result.data.status === "completed") {
+        toast({
+          title: t("taskManager.translationCompleted"),
+          description: t("taskManager.translationCompletedDescription"),
+        })
+      } else if (result.data.status === "failed") {
+        toast({
+          title: t("taskManager.translationFailed"),
+          description: result.data.message || t("taskManager.processingError"),
+          variant: "destructive",
+        })
       }
     } catch (error) {
       console.error("Failed to check task status:", error)
     }
-  }, [taskKey, toast])
+  }, [taskKey, toast, t])
 
-  const downloadResult = async (filename?: string) => {
+  const downloadResult = async () => {
     if (!taskKey) return
 
     try {
-      const downloadFilename = buildDownloadFilename(filename || fileName)
       const downloadUrl = await api.getDownloadResultUrl(taskKey)
-
-      try {
-        downloadFileFromUrl(downloadUrl, downloadFilename)
-      } catch (error) {
-        console.error("Failed to trigger direct download, falling back to blob download:", error)
-        const response = await api.downloadResult(taskKey)
-
-        if (!response.ok) {
-          throw new Error("下载失败")
-        }
-
-        const blob = await response.blob()
-        downloadFile(blob, downloadFilename)
-      }
+      window.location.assign(downloadUrl)
 
       toast({
-        title: "下载成功",
-        description: "汉化模组已开始下载",
+        title: t("taskManager.downloadSuccess"),
+        description: t("taskManager.downloadStarted"),
       })
     } catch (error) {
       toast({
-        title: "下载失败",
-        description: error instanceof Error ? error.message : "请稍后重试",
+        title: t("taskManager.downloadFailed"),
+        description: error instanceof Error ? error.message : t("taskManager.retryLater"),
         variant: "destructive",
       })
     }
@@ -165,14 +135,14 @@ export const useTaskManager = () => {
       if (result.success) {
         reset()
         toast({
-          title: "任务已取消",
-          description: "你可以重新上传文件",
+          title: t("taskManager.taskCancelled"),
+          description: t("taskManager.taskCancelledDescription"),
         })
       }
     } catch (error) {
       toast({
-        title: "取消失败",
-        description: "请稍后重试",
+        title: t("taskManager.cancelFailed"),
+        description: t("taskManager.retryLater"),
         variant: "destructive",
       })
     }
@@ -184,19 +154,19 @@ export const useTaskManager = () => {
     try {
       const result = await api.retryTask(taskKey)
 
-      if (result.success) {
-        toast({
-          title: "重试成功",
-          description: "任务已重新开始处理",
-        })
-        checkTaskStatus()
-      } else {
-        throw new Error(result.message || "重试失败")
+      if (!result.success) {
+        throw new Error(result.message || t("taskManager.retryFailed"))
       }
+
+      toast({
+        title: t("taskManager.retrySuccess"),
+        description: t("taskManager.retrySuccessDescription"),
+      })
+      checkTaskStatus()
     } catch (error) {
       toast({
-        title: "重试失败",
-        description: error instanceof Error ? error.message : "请稍后重试",
+        title: t("taskManager.retryFailed"),
+        description: error instanceof Error ? error.message : t("taskManager.retryLater"),
         variant: "destructive",
       })
     }
@@ -209,7 +179,6 @@ export const useTaskManager = () => {
     setTargetLanguage("")
   }
 
-  // 轮询任务状态
   useEffect(() => {
     if (taskKey && taskStatus?.status !== "completed" && taskStatus?.status !== "failed") {
       const interval = setInterval(checkTaskStatus, POLL_INTERVAL)

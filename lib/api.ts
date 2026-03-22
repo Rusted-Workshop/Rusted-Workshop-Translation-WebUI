@@ -1,4 +1,5 @@
 import type { ApiResponse, TaskStatus } from "@/types"
+import { getInterfaceLocale, translate } from "@/lib/i18n"
 
 type BackendTask = {
   task_id?: string
@@ -55,27 +56,21 @@ function mapStatus(status?: string): TaskStatus["status"] {
 }
 
 function getTaskMessage(task: BackendTask): string {
+  const locale = getInterfaceLocale()
+
   if (task.status === "failed") {
-    return task.error_message || "任务处理失败"
+    return task.error_message || translate(locale, "taskMessages.failedDefault")
   }
 
   if (task.status === "completed") {
-    return "任务处理完成"
+    return translate(locale, "taskMessages.completed")
   }
 
-  if (task.status === "preparing") {
-    return "正在准备文件"
+  if (task.status === "preparing" || task.status === "translating" || task.status === "finalizing" || task.status === "processing") {
+    return translate(locale, "taskMessages.processing")
   }
 
-  if (task.status === "translating") {
-    return "正在翻译文件"
-  }
-
-  if (task.status === "finalizing") {
-    return "正在打包结果"
-  }
-
-  return "任务等待处理中"
+  return translate(locale, "taskMessages.pending")
 }
 
 function normalizeTask(task: BackendTask): TaskStatus {
@@ -133,7 +128,7 @@ async function parseErrorMessage(response: Response): Promise<string> {
     // ignore json parsing failure
   }
 
-  return `后端服务错误 (${response.status})`
+  return translate(getInterfaceLocale(), "api.backendError", { status: response.status })
 }
 
 function getTaskIdFromPayload(payload: unknown): string | null {
@@ -206,7 +201,7 @@ export const api = {
         return {
           success: false,
           data: "",
-          message: "后端未返回任务ID",
+          message: translate(getInterfaceLocale(), "api.noTaskId"),
           error_code: "NO_TASK_ID",
         }
       }
@@ -219,7 +214,7 @@ export const api = {
       return {
         success: false,
         data: "",
-        message: error instanceof Error ? error.message : "创建任务失败",
+        message: error instanceof Error ? error.message : translate(getInterfaceLocale(), "api.createTaskFailed"),
         error_code: "API_ERROR",
       }
     }
@@ -256,7 +251,7 @@ export const api = {
         data: {
           status: "failed",
         },
-        message: error instanceof Error ? error.message : "获取任务状态失败",
+        message: error instanceof Error ? error.message : translate(getInterfaceLocale(), "api.getTaskStatusFailed"),
         error_code: "API_ERROR",
       }
     }

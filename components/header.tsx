@@ -1,9 +1,15 @@
+ "use client"
+
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Zap, FileText, Shield, Languages, Code, HelpCircle, ExternalLink } from "lucide-react"
+import { Zap, Languages, HelpCircle, ExternalLink } from "lucide-react"
 import Link from "next/link"
+import { LocaleSwitcher } from "@/components/locale-switcher"
+import { useI18n } from "@/components/i18n-provider"
 
 export const Header = () => {
+  const { t } = useI18n()
+
   return (
     <header className="border-b bg-zinc-900/80 backdrop-blur-sm sticky top-0 z-50">
       <div className="container mx-auto px-4 py-4">
@@ -13,8 +19,8 @@ export const Header = () => {
               <Zap className="h-6 w-6 text-white" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-white">铁锈工坊</h1>
-              <p className="text-sm text-green-400 font-medium">汉化组工具</p>
+              <h1 className="text-2xl font-bold text-white">{t("nav.workshop")}</h1>
+              <p className="text-sm text-green-400 font-medium">{t("nav.toolSubtitle")}</p>
             </div>
           </Link>
 
@@ -28,7 +34,7 @@ export const Header = () => {
               >
                 <a href="https://rw.denox.cc" target="_blank" rel="noopener noreferrer">
                   <ExternalLink className="h-4 w-4 mr-2" />
-                  铁锈工坊
+                  {t("nav.workshopSite")}
                 </a>
               </Button>
 
@@ -40,7 +46,7 @@ export const Header = () => {
               >
                 <Link href="/">
                   <Languages className="h-4 w-4 mr-2" />
-                  汉化工具
+                  {t("nav.translationTool")}
                 </Link>
               </Button>
 
@@ -52,13 +58,15 @@ export const Header = () => {
               >
                 <Link href="/about">
                   <HelpCircle className="h-4 w-4 mr-2" />
-                  关于
+                  {t("nav.about")}
                 </Link>
               </Button>
             </nav>
 
+            <LocaleSwitcher />
+
             <Badge variant="outline" className="border-green-600 text-green-400">
-              Beta
+              {t("common.beta")}
             </Badge>
           </div>
         </div>

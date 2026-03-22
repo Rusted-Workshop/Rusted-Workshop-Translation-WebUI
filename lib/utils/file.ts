@@ -1,12 +1,15 @@
 import { FILE_SIZE_LIMIT } from "@/constants"
+import { getInterfaceLocale, translate } from "@/lib/i18n"
 
 export const validateFile = (file: File) => {
+  const locale = getInterfaceLocale()
+
   if (!file.name.endsWith(".rwmod")) {
-    return { valid: false, error: "请选择 .rwmod 格式的模组文件" }
+    return { valid: false, error: translate(locale, "fileUpload.invalidExtension") }
   }
 
   if (file.size > FILE_SIZE_LIMIT) {
-    return { valid: false, error: "文件大小不能超过 100MB" }
+    return { valid: false, error: translate(locale, "fileUpload.fileTooLarge") }
   }
 
   return { valid: true }

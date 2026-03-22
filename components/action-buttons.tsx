@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Download, RotateCcw, Copy, Settings, CheckCircle, XCircle } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import type { TaskStatus } from "@/types"
+import { useI18n } from "@/components/i18n-provider"
 
 interface ActionButtonsProps {
   taskKey: string
@@ -16,12 +17,13 @@ interface ActionButtonsProps {
 
 export const ActionButtons = ({ taskKey, taskStatus, onDownload, onReset, onCancel, onRetry }: ActionButtonsProps) => {
   const { toast } = useToast()
+  const { t } = useI18n()
 
   const copyTaskId = () => {
     navigator.clipboard.writeText(taskKey)
     toast({
-      title: "已复制",
-      description: "任务ID已复制到剪贴板",
+      title: t("common.copied"),
+      description: t("common.taskIdCopied"),
     })
   }
 
@@ -39,11 +41,11 @@ export const ActionButtons = ({ taskKey, taskStatus, onDownload, onReset, onCanc
   const getStatusText = () => {
     switch (taskStatus.status) {
       case "completed":
-        return "任务完成"
+        return t("actionButtons.taskCompleted")
       case "failed":
-        return "任务失败"
+        return t("actionButtons.taskFailed")
       default:
-        return "任务控制 Task Control"
+        return t("actionButtons.taskControl")
     }
   }
 
@@ -64,14 +66,14 @@ export const ActionButtons = ({ taskKey, taskStatus, onDownload, onReset, onCanc
               style={{ borderRadius: '4px' }}
             >
               <Download className="h-4 w-4 mr-2" />
-              下载文件
+              {t("actionButtons.downloadFile")}
             </Button>
             <Button 
               onClick={onReset} 
               className="border-2 border-green-600 bg-green-950 text-green-400 hover:bg-green-900 hover:border-green-500 font-bold uppercase tracking-wide"
               style={{ borderRadius: '4px' }}
             >
-              新任务
+              {t("actionButtons.newTask")}
             </Button>
           </div>
           <Button 
@@ -80,7 +82,7 @@ export const ActionButtons = ({ taskKey, taskStatus, onDownload, onReset, onCanc
             style={{ borderRadius: '4px' }}
           >
             <Copy className="h-3 w-3 mr-2" />
-            复制任务ID
+            {t("actionButtons.copyTaskId")}
           </Button>
         </div>
       </div>
@@ -103,7 +105,7 @@ export const ActionButtons = ({ taskKey, taskStatus, onDownload, onReset, onCanc
               className="flex-1 bg-green-600 hover:bg-green-700 border-2 border-green-700 hover:border-green-800 text-white font-bold uppercase tracking-wide"
               style={{ borderRadius: '4px' }}
             >
-              重新开始
+              {t("actionButtons.restart")}
             </Button>
             {onRetry && (
               <Button 
@@ -112,7 +114,7 @@ export const ActionButtons = ({ taskKey, taskStatus, onDownload, onReset, onCanc
                 style={{ borderRadius: '4px' }}
               >
                 <RotateCcw className="h-4 w-4 mr-2" />
-                重试
+                {t("actionButtons.retry")}
               </Button>
             )}
           </div>
@@ -122,7 +124,7 @@ export const ActionButtons = ({ taskKey, taskStatus, onDownload, onReset, onCanc
             style={{ borderRadius: '4px' }}
           >
             <Copy className="h-3 w-3 mr-2" />
-            复制任务ID
+            {t("actionButtons.copyTaskId")}
           </Button>
         </div>
       </div>
@@ -143,7 +145,7 @@ export const ActionButtons = ({ taskKey, taskStatus, onDownload, onReset, onCanc
           className="w-full border-2 border-red-600 bg-red-950 text-red-400 hover:bg-red-900 hover:border-red-500 font-bold uppercase tracking-wide"
           style={{ borderRadius: '4px' }}
         >
-          取消任务
+          {t("actionButtons.cancelTask")}
         </Button>
         <Button 
           onClick={copyTaskId} 
@@ -151,7 +153,7 @@ export const ActionButtons = ({ taskKey, taskStatus, onDownload, onReset, onCanc
           style={{ borderRadius: '4px' }}
         >
           <Copy className="h-3 w-3 mr-2" />
-          复制任务ID
+          {t("actionButtons.copyTaskId")}
         </Button>
       </div>
     </div>

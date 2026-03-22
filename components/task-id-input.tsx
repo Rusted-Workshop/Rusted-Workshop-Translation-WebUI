@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Search, Loader2, Terminal } from "lucide-react"
+import { useI18n } from "@/components/i18n-provider"
 
 interface TaskIdInputProps {
   onTaskRestore: (taskId: string) => void
@@ -15,6 +16,7 @@ interface TaskIdInputProps {
 
 export const TaskIdInput = ({ onTaskRestore, isLoading = false }: TaskIdInputProps) => {
   const [taskId, setTaskId] = useState("")
+  const { t } = useI18n()
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -31,18 +33,18 @@ export const TaskIdInput = ({ onTaskRestore, isLoading = false }: TaskIdInputPro
             <Terminal className="h-5 w-5 text-green-400" />
           </div>
           <div>
-            <h3 className="text-lg font-bold text-white uppercase tracking-wide">任务恢复</h3>
-            <p className="text-sm text-zinc-500 font-medium">TASK RESTORE</p>
+            <h3 className="text-lg font-bold text-white uppercase tracking-wide">{t("taskRestore.title")}</h3>
+            <p className="text-sm text-zinc-500 font-medium">{t("taskRestore.subtitle")}</p>
           </div>
         </div>
-        <p className="text-sm text-zinc-400 mt-3 font-medium">输入任务ID来查看和恢复之前的翻译任务进度</p>
+        <p className="text-sm text-zinc-400 mt-3 font-medium">{t("taskRestore.description")}</p>
       </div>
 
       <div className="p-6">
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-3">
             <Label htmlFor="taskId" className="text-sm font-bold text-zinc-300 uppercase tracking-wide">
-              任务ID
+              {t("taskRestore.taskIdLabel")}
             </Label>
             <Input
               id="taskId"
@@ -65,12 +67,12 @@ export const TaskIdInput = ({ onTaskRestore, isLoading = false }: TaskIdInputPro
             {isLoading ? (
               <>
                 <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                查询中...
+                {t("taskRestore.searching")}
               </>
             ) : (
               <>
                 <Search className="h-4 w-4 mr-2" />
-                查询任务
+                {t("taskRestore.searchTask")}
               </>
             )}
           </Button>
